@@ -24,7 +24,7 @@ If you need guidance to install Terraform, please refer to this documentation: h
 
 ## Objectives
 
-*Foundational*
+**Foundational**
 
 ✔ Deploy an AWS EC2 instance in the default VPC.
 
@@ -48,7 +48,7 @@ Let’s create a folder to stay organized and two files “terraform.tf” and �
     touch main.tf terraform.tf
 
 As we will be launching our infrastructure on AWS, we need to configure the provider block for AWS in the “terraform.tf” file.
-
+```
     # Provider block
     terraform {
       required_providers {
@@ -58,9 +58,9 @@ As we will be launching our infrastructure on AWS, we need to configure the prov
         }
       }
     }
-
+```
 In the “main.tf” file, we will begin coding the Jenkins instance by creating our first resource block. Also, I am configuring the infrastructure to be deployed in the us-east-1 region, although you are free to select a region closer to you.
-
+```
     provider "aws" {
       region = "us-east-1"
     }
@@ -75,7 +75,7 @@ In the “main.tf” file, we will begin coding the Jenkins instance by creating
         Name = "jenkins-instance"
       }
     }
-
+```
 Let’s go over this code snippet.
 
 provider “aws” {region = “us-east-1”} ⇒ This line indicates that we are using AWS provider and we want to deploy our resources in the “us-east-1” region.

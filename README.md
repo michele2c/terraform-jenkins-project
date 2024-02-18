@@ -43,8 +43,8 @@ To start our project, open the Cloud9 environment if you haven’t yet and check
 
 Let’s create a folder to stay organized and two files “terraform.tf” and “main.tf”.
 
-    - mkdir terraform-jenkins-project && cd terraform-jenkins-project
+    mkdir terraform-jenkins-project && cd terraform-jenkins-project
 
-    - touch main.tf terraform.tf
+    touch main.tf terraform.tf
 
 

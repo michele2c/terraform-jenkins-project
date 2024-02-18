@@ -60,7 +60,6 @@ terraform {
 }
 ```
 In the “main.tf” file, we will begin coding the Jenkins instance by creating our first resource block. Also, I am configuring the infrastructure to be deployed in the us-east-1 region, although you are free to select a region closer to you.
-```
     provider "aws" {
       region = "us-east-1"
     }
@@ -75,10 +74,10 @@ In the “main.tf” file, we will begin coding the Jenkins instance by creating
         Name = "jenkins-instance"
       }
     }
-```
+    
 Let’s go over this code snippet.
 
-provider “aws” {region = “us-east-1”} ⇒ This line indicates that we are using AWS provider and we want to deploy our resources in the “us-east-1” region.
+`provider “aws” {region = “us-east-1”}` ⇒ This line indicates that we are using AWS provider and we want to deploy our resources in the “us-east-1” region.
 
 resource "aws_instance" "jenkins_pipeline" {} ⇒ Here we opened a resource block, specifying the type of resource "aws_instance" and its name "jenkins_pipeline" . Together those two form a unique ID for this resource block.
 

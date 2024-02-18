@@ -187,7 +187,9 @@ Now, add a new argument `security_groups = []` to our instance resource block. A
 Awesome! We’re all set to launch our Jenkins instance. Let’s dive in with Terraform commands:
 
 The first step to prepare Terraform for the work ahead is `terraform init` command. When we run terraform init, we’re essentially telling Terraform to set up its environment for our project.
-```terraform init```
+```
+terraform init
+```
 
 
 

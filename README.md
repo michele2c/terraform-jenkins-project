@@ -49,15 +49,15 @@ Let’s create a folder to stay organized and two files “terraform.tf” and �
 
 As we will be launching our infrastructure on AWS, we need to configure the provider block for AWS in the “terraform.tf” file.
 ```
-    # Provider block
-    terraform {
-      required_providers {
-        aws = {
-          source  = "hashicorp/aws"
-          version = "5.36.0"
-        }
-      }
+# Provider block
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.36.0"
     }
+  }
+}
 ```
 In the “main.tf” file, we will begin coding the Jenkins instance by creating our first resource block. Also, I am configuring the infrastructure to be deployed in the us-east-1 region, although you are free to select a region closer to you.
 ```

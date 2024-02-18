@@ -79,17 +79,17 @@ Let’s go over this code snippet.
 
 `provider “aws” {region = “us-east-1”}` ⇒ This line indicates that we are using AWS provider and we want to deploy our resources in the “us-east-1” region.
 
-resource "aws_instance" "jenkins_pipeline" {} ⇒ Here we opened a resource block, specifying the type of resource "aws_instance" and its name "jenkins_pipeline" . Together those two form a unique ID for this resource block.
+`resource "aws_instance" "jenkins_pipeline" {}` ⇒ Here we opened a resource block, specifying the type of resource "aws_instance" and its name "jenkins_pipeline" . Together those two form a unique ID for this resource block.
 
-ami ⇒ The AMI of the instance.
+`ami` ⇒ The AMI of the instance.
 
-instance_type ⇒ The size of the instance.
+`instance_type` ⇒ The size of the instance.
 
-key_name ⇒ Key pair we will use to do an SSH connection.
+`key_name` ⇒ Key pair we will use to do an SSH connection.
 
-Note: If you haven’t yet, make sure you create key pair.
+*Note: If you haven’t yet, make sure you create key pair.*
 
-tags = {Name = "jenkins-instance"} ⇒ The name of the instance.
+`tags = {Name = "jenkins-instance"}` ⇒ The name of the instance.
 
 ### 2. Bootstrap the EC2 instance with a script that will install and start Jenkins
 
@@ -111,22 +111,23 @@ Create the script by copying and pasting the code below.
     sudo apt-get install jenkins -y
     sudo systemctl enable jenkins
 
-Let’s map it in our code, adding the user_data argument and the Terraform function called file(), it should look like this user_data = file("./install_jenkins_script.sh").
+Let’s map it in our code, adding the `user_data` argument and the Terraform function called `file()`, it should look like this `user_data = file("./install_jenkins_script.sh")`.
+```
+provider "aws" {
+  region = "us-east-1"
+}
 
-    provider "aws" {
-      region = "us-east-1"
-    }
-    
-    # Resource Block - EC2 instance
-    resource "aws_instance" "jenkins_pipeline" {
-      ami             = "ami-0c7217cdde317cfec" # Ubuntu 22.04
-      instance_type   = "t2.micro"
-      key_name        = "tfproject" # Key pair
-      user_data       = file("./install_jenkins_script.sh")
-      tags = {
-        Name = "jenkins-instance"
-      }
-    }
+# Resource Block - EC2 instance
+resource "aws_instance" "jenkins_pipeline" {
+  ami             = "ami-0c7217cdde317cfec" # Ubuntu 22.04
+  instance_type   = "t2.micro"
+  key_name        = "tfproject" # Key pair
+  user_data       = file("./install_jenkins_script.sh")
+  tags = {
+    Name = "jenkins-instance"
+  }
+}
+```
 
 ### 3. Create and assign a Security Group to the Jenkins Security Group that allows traffic on port 22 from your IP and allows traffic from port 8080
 
@@ -164,7 +165,7 @@ To create a Security Group, we need to add another resource block. This block sh
       }
     }
 
-Now, add a new argument security_groups = [] to our instance resource block. And pass the ID of the security group resource along with the name argument. As I said before, this ID is the combination of the resource type and the resource name, aws_security_group.jenkins_sg .
+Now, add a new argument `security_groups = []` to our instance resource block. And pass the ID of the security group resource along with the name argument. As I said before, this ID is the combination of the resource type and the resource name, `aws_security_group.jenkins_sg` .
 
     provider "aws" {
       region = "us-east-1"
@@ -185,8 +186,8 @@ Now, add a new argument security_groups = [] to our instance resource block. And
 
 Awesome! We’re all set to launch our Jenkins instance. Let’s dive in with Terraform commands:
 
-The first step to prepare Terraform for the work ahead is terraform init command. When we run terraform init, we’re essentially telling Terraform to set up its environment for our project.
-    terraform init
+The first step to prepare Terraform for the work ahead is `terraform init` command. When we run terraform init, we’re essentially telling Terraform to set up its environment for our project.
+```terraform init```
 
 
 

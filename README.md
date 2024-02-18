@@ -190,6 +190,14 @@ The first step to prepare Terraform for the work ahead is `terraform init` comma
 
     terraform init
 
+Next, `terraform fmt` our friendly formatting assistant. When we run this command, Terraform looks into all .tf files and formats our code, making it organized and consistent, ensuring that all the code looks easy to read.
+
+    terraform fmt
+
+Now, let’s validate if the configuration is in order and there are no syntax errors or typos by running `terraform validate` command.
+
+    terraform validate
+
 
 
 

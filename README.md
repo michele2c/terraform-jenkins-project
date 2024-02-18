@@ -76,3 +76,125 @@ In the “main.tf” file, we will begin coding the Jenkins instance by creating
       }
     }
 
+Let’s go over this code snippet.
+
+provider “aws” {region = “us-east-1”} ⇒ This line indicates that we are using AWS provider and we want to deploy our resources in the “us-east-1” region.
+
+resource "aws_instance" "jenkins_pipeline" {} ⇒ Here we opened a resource block, specifying the type of resource "aws_instance" and its name "jenkins_pipeline" . Together those two form a unique ID for this resource block.
+
+ami ⇒ The AMI of the instance.
+
+instance_type ⇒ The size of the instance.
+
+key_name ⇒ Key pair we will use to do an SSH connection.
+
+Note: If you haven’t yet, make sure you create key pair.
+
+tags = {Name = "jenkins-instance"} ⇒ The name of the instance.
+
+### 2. Bootstrap the EC2 instance with a script that will install and start Jenkins
+
+For this step, I wrote a shell script file that installs Jenkins and sets the necessary configuration for our instance. Then, I saved it as “install_jenkins_script.sh” in the project folder.
+
+Create the script by copying and pasting the code below.
+    
+    #!/bin/bash
+    sudo apt-get update -y
+    # install java
+    sudo apt install fontconfig openjdk-17-jre -y
+    # install jenkins
+    sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+      https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+      https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+      /etc/apt/sources.list.d/jenkins.list > /dev/null
+    sudo apt-get update -y
+    sudo apt-get install jenkins -y
+    sudo systemctl enable jenkins
+
+Let’s map it in our code, adding the user_data argument and the Terraform function called file(), it should look like this user_data = file("./install_jenkins_script.sh").
+
+    provider "aws" {
+      region = "us-east-1"
+    }
+    
+    # Resource Block - EC2 instance
+    resource "aws_instance" "jenkins_pipeline" {
+      ami             = "ami-0c7217cdde317cfec" # Ubuntu 22.04
+      instance_type   = "t2.micro"
+      key_name        = "tfproject" # Key pair
+      user_data       = file("./install_jenkins_script.sh")
+      tags = {
+        Name = "jenkins-instance"
+      }
+    }
+
+### 3. Create and assign a Security Group to the Jenkins Security Group that allows traffic on port 22 from your IP and allows traffic from port 8080
+
+To create a Security Group, we need to add another resource block. This block should contain arguments like “ingress” and “egress” rules for inbound and outbound traffic. These rules will allow traffic on port 22 and port 8080. Make sure to add the VPC id of your AWS Default VPC and your IP address when indicated.
+
+    # Resource Block - Security Group 
+    resource "aws_security_group" "jenkins_sg" {
+      name        = "jenkins-sg"
+      description = "Allows ssh connection and web traffic for jenkins-instance"
+      vpc_id      = "<VPC-ID>" # Your default VPC id
+    
+      ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["<YOUR-IP-ADDRESS>"] # Your IP address
+      }
+    
+      ingress {
+        from_port   = 8080
+        to_port     = 8080
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+    
+      egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1" # All ports
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+    
+      tags = {
+        Name = "jenkins-sg"
+      }
+    }
+
+Now, add a new argument security_groups = [] to our instance resource block. And pass the ID of the security group resource along with the name argument. As I said before, this ID is the combination of the resource type and the resource name, aws_security_group.jenkins_sg .
+
+    provider "aws" {
+      region = "us-east-1"
+    }
+    
+    # Resource Block - EC2 instance
+    resource "aws_instance" "jenkins_pipeline" {
+      ami             = "ami-0c7217cdde317cfec" # Ubuntu 22.04
+      instance_type   = "t2.micro"
+      key_name        = "tfproject" # Key pair
+      user_data       = file("./install_jenkins_script.sh")
+      security_groups = [aws_security_group.jenkins_sg.name]
+    
+      tags = {
+        Name = "jenkins-instance"
+      }
+    }
+
+Awesome! We’re all set to launch our Jenkins instance. Let’s dive in with Terraform commands:
+
+The first step to prepare Terraform for the work ahead is terraform init command. When we run terraform init, we’re essentially telling Terraform to set up its environment for our project.
+    terraform init
+
+
+
+
+
+
+
+
+
+

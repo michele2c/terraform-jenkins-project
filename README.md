@@ -14,9 +14,9 @@ Your team would like to start using Jenkins as their CI/CD tool to create pipeli
 
 To ensure a successful start for this guide, you may need the following:
 
-    - AWS Console Management account
-    - Knowledge of Cloud9 and AWS resources
-    - AWS Key pair
+- AWS Console Management account
+- Knowledge of Cloud9 and AWS resources
+- AWS Key pair
 
 My environment setup: For this project, I am using a Cloud9 environment with Terraform installed.
 
@@ -43,8 +43,8 @@ To start our project, open the Cloud9 environment if you haven’t yet and check
 
 Let’s create a folder to stay organized and two files “terraform.tf” and “main.tf”.
 
-- mkdir terraform-jenkins-project && cd terraform-jenkins-project
+    - mkdir terraform-jenkins-project && cd terraform-jenkins-project
 
-- touch main.tf terraform.tf
+    - touch main.tf terraform.tf
 
 

@@ -198,11 +198,74 @@ Now, let’s validate if the configuration is in order and there are no syntax e
 
     terraform validate
 
+Once we have our configuration validated, let’s run the `terraform plan` command to get a preview of our future infrastructure.
+    terraform plan
 
+This command prints out all the resources that will be created, modified, or destroyed based on our configuration. It’s incredibly handy!
+And finally, let’s deploy our instance with `terraform apply` .
+    terraform apply
+    
+    #the -auto-approve flag will execute the plan without prompting for your confiramtion
+    terraform apply -auto-approve
+Excellent! Terraform has successfully deployed our Jenkins instance.
 
+### 4. Create a S3 bucket for the Jenkins Artifacts that is not open to the public
 
+To set up an S3 bucket for Jenkins artifacts, we will add a new provider called “random”. This provider will assist us in generating a unique name for our bucket.
 
+Let’s install this provider by copying and pasting the code below into our Terraform configuration file.
+```
+random = {
+source = "hashicorp/random"
+version = "3.6.0"
+}
+```
+In the “main.tf, add a new resource block to create a random identifier with a length of 8 bytes.
+```
+# Resource Block - Random provider resource
+resource "random_id" "bucket" {
+  byte_length = 8
+}
+```
+*Note: Using this provider is not a requirement for creating bucket names. It just helps to meet AWS requirements for a bucket name to be globally unique.*
 
+Then, add three more resources block for the s3 bucket configuration.
+```
+# Resource Block - s3 Bucket
+resource "aws_s3_bucket" "jenkins_artifacts_bucket" {
+  bucket = "jenkins-artifacts-bucket-${random_id.bucket.hex}"
+}
+# Create a configuration for S3 bucket ownership controls
+resource "aws_s3_bucket_ownership_controls" "jenkins_artifacts_bucket" {
+  bucket = aws_s3_bucket.jenkins_artifacts_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+# Create a configuration for managing the ACL and set to "private"
+resource "aws_s3_bucket_acl" "jenkins_artifacts_bucket" {
+  depends_on = [aws_s3_bucket_ownership_controls.jenkins_artifacts_bucket]
 
+  bucket = aws_s3_bucket.jenkins_artifacts_bucket.id
+  acl    = "private"
+}
+```
+Run the following commands:
+```
+# Download the random provider
+terraform init
+
+# Check the formatting
+terraform fmt
+
+# Validate configuration
+terraform validate
+
+# Visualize changes
+terraform plan
+
+# Execute the plan
+terraform apply -auto-approve
+```
 
 

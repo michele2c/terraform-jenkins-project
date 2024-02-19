@@ -6,7 +6,7 @@
 /*Automate your infrastructure*/
 
 In this project, we will use Terraform to create infrastructure automation to provision and manage AWS resources and deploy Jenkins CI/CD pipeline.
----
+
 
 ## Use Case
 
